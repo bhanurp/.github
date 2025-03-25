@@ -5,6 +5,8 @@ LOG_DIR="$HOME/jfrog_home/artifactory/var/log"
 mkdir -p "$LOG_DIR"
 ZIP_FILE="$HOME/artifactory-logs.zip"
 
+echo "🧹 Cleaning up artifactory home"
+rm -rf ~/jfrog_home
 echo "📦 Running local Artifactory setup..."
 go install github.com/jfrog/jfrog-testing-infra/local-rt-setup@main
 if [[ -n "${VERSION}" ]]; then
