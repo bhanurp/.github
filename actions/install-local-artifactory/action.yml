@@ -18,6 +18,7 @@ runs:
       run: |
         chmod +x $GITHUB_ACTION_PATH/run-and-upload.sh
         $GITHUB_ACTION_PATH/run-and-upload.sh
+      shell: bash
       env:
         RTLIC: ${{ inputs.RTLIC }}
         JFROG_HOME: ${{ inputs.JFROG_HOME }}
