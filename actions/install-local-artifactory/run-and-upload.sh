@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-LOG_DIR="$HOME/jfrog_home/artifactory/var/log"
+LOG_DIR="$JFROG_HOME/artifactory/var/log"
 mkdir -p "$LOG_DIR"
 ZIP_FILE="$HOME/artifactory-logs.zip"
 
