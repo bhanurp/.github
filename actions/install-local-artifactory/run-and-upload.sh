@@ -9,6 +9,12 @@ fi
 if [[ -z "${JFROG_HOME}" ]]; then
     JFROG_HOME=~/jfrog_home
 fi
+
+if [[ -d "${JFROG_HOME}" ]]; then
+  echo "🗑️ Deleting existing JFROG_HOME directory at ${JFROG_HOME}..."
+  rm -rf "${JFROG_HOME}"
+fi
+
 LOG_DIR="$JFROG_HOME/artifactory/var/log"
 mkdir -p "$LOG_DIR"
 ZIP_FILE="$HOME/artifactory-logs.zip"
