@@ -1,12 +1,17 @@
 #!/bin/bash
 set -e
 
+if curl -s http://localhost:8082/artifactory/api/v1/system/ping | grep -q "OK"; then
+  echo "✅ Artifactory is already running. Skipping installation."
+  exit 0
+fi
+
+if [[ -z "${JFROG_HOME}" ]]; then
+    JFROG_HOME=~/jfrog_home
+fi
 LOG_DIR="$JFROG_HOME/artifactory/var/log"
 mkdir -p "$LOG_DIR"
 ZIP_FILE="$HOME/artifactory-logs.zip"
-
-echo "🧹 Cleaning up artifactory home"
-rm -rf ~/jfrog_home
 echo "📦 Running local Artifactory setup..."
 go install github.com/jfrog/jfrog-testing-infra/local-rt-setup@main
 if [[ -n "${VERSION}" ]]; then
