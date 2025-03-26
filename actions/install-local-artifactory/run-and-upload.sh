@@ -30,9 +30,13 @@ ZIP_FILE="$HOME/artifactory-logs.zip"
 echo "📦 Running local Artifactory setup..."
 go install github.com/jfrog/jfrog-testing-infra/local-rt-setup@main
 if [[ -n "${VERSION}" ]]; then
-  ~/go/bin/local-rt-setup --rt-version "$VERSION"
+  if ! ~/go/bin/local-rt-setup --rt-version "$VERSION"; then
+    echo "⚠️ local-rt-setup failed with version $VERSION"
+  fi
 else
-  ~/go/bin/local-rt-setup
+  if ! ~/go/bin/local-rt-setup; then
+    echo "⚠️ local-rt-setup failed"
+  fi
 fi
 
 echo "📦 Zipping logs for macOS/Linux"
