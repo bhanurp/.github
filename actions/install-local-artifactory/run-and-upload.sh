@@ -1,8 +1,13 @@
 #!/bin/bash
 set -e
 
-if ! PING_RESPONSE=$(curl -s http://localhost:8082/artifactory/api/v1/system/ping); then
-  echo "⚠️ Curl failed with exit code $? — Continuing with installation."
+PING_RESPONSE=""
+CURL_EXIT_CODE=0
+
+PING_RESPONSE=$(curl -s http://localhost:8082/artifactory/api/v1/system/ping) || CURL_EXIT_CODE=$?
+
+if [[ $CURL_EXIT_CODE -ne 0 ]]; then
+  echo "⚠️ Curl failed with exit code $CURL_EXIT_CODE — Continuing with installation."
 else
   echo "🔍 Ping response: $PING_RESPONSE"
   if echo "$PING_RESPONSE" | grep -q "OK"; then
