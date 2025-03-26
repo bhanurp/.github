@@ -16,7 +16,6 @@ if [[ -d "${JFROG_HOME}" ]]; then
 fi
 
 LOG_DIR="$JFROG_HOME/artifactory/var/log"
-mkdir -p "$LOG_DIR"
 ZIP_FILE="$HOME/artifactory-logs.zip"
 echo "📦 Running local Artifactory setup..."
 go install github.com/jfrog/jfrog-testing-infra/local-rt-setup@main
