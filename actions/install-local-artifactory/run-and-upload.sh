@@ -27,17 +27,18 @@ else
   ~/go/bin/local-rt-setup
 fi
 
-OS_NAME="$(uname -s)"
+echo "📦 Zipping logs for macOS/Linux"
 
-if [[ "$OS_NAME" == MINGW* || "$OS_NAME" == MSYS* || "$OS_NAME" == CYGWIN* ]]; then
-  echo "⚠️ Zip step skipped on Windows — not supported in bash mode"
-else
-  echo "🐧 Unix-like system detected — using zip"
-  if command -v zip >/dev/null 2>&1; then
-    zip -j "$ZIP_FILE" "$LOG_DIR"/*.log || echo "⚠️ Failed to zip logs"
+if command -v zip >/dev/null 2>&1; then
+  if compgen -G "$LOG_DIR"/*.log > /dev/null; then
+    zip -j "$ZIP_FILE" "$LOG_DIR"/*.log
   else
-    echo "❌ 'zip' command not found"
+    echo "⚠️ No logs found to zip"
+    touch "$ZIP_FILE"
   fi
+else
+  echo "❌ 'zip' command not found"
+  touch "$ZIP_FILE"
 fi
 
 echo "📤 Skipping direct upload inside action."
