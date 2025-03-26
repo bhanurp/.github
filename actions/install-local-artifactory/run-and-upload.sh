@@ -1,11 +1,14 @@
 #!/bin/bash
 set -e
 
-PING_RESPONSE=$(curl -s http://localhost:8082/artifactory/api/v1/system/ping)
-echo "🔍 Ping response: $PING_RESPONSE"
-if echo "$PING_RESPONSE" | grep -q "OK"; then
-  echo "✅ Artifactory is already running. Skipping installation."
-  exit 0
+if ! PING_RESPONSE=$(curl -s http://localhost:8082/artifactory/api/v1/system/ping); then
+  echo "⚠️ Curl failed with exit code $? — Continuing with installation."
+else
+  echo "🔍 Ping response: $PING_RESPONSE"
+  if echo "$PING_RESPONSE" | grep -q "OK"; then
+    echo "✅ Artifactory is already running. Skipping installation."
+    exit 0
+  fi
 fi
 
 if [[ -z "${JFROG_HOME}" ]]; then
