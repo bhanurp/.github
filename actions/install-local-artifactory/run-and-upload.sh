@@ -28,13 +28,11 @@ else
 fi
 
 OS_NAME="$(uname -s)"
-if [[ "$OS_NAME" == "MINGW"* || "$OS_NAME" == "MSYS"* || "$OS_NAME" == "CYGWIN"* ]]; then
-  echo "Windows detected — using PowerShell to compress logs"
-  LOG_DIR_WIN=$(cygpath -w "$LOG_DIR")
-  ZIP_FILE_WIN=$(cygpath -w "$ZIP_FILE")
-  powershell.exe -Command "Compress-Archive -Path '${LOG_DIR_WIN}\\*.log' -DestinationPath '${ZIP_FILE_WIN}'"
+
+if [[ "$OS_NAME" == MINGW* || "$OS_NAME" == MSYS* || "$OS_NAME" == CYGWIN* ]]; then
+  echo "⚠️ Zip step skipped on Windows — not supported in bash mode"
 else
-  echo "🐧 Linux/macOS detected — using zip"
+  echo "🐧 Unix-like system detected — using zip"
   if command -v zip >/dev/null 2>&1; then
     zip -j "$ZIP_FILE" "$LOG_DIR"/*.log || echo "⚠️ Failed to zip logs"
   else
@@ -42,7 +40,5 @@ else
   fi
 fi
 
-echo "📤 Uploading logs..."
-curl -sL https://github.com/actions/upload-artifact/releases/latest/download/upload-artifact-linux -o upload-artifact
-chmod +x upload-artifact
-./upload-artifact --name artifactory-logs --path "$ZIP_FILE" || echo "⚠️ Failed to upload logs"
+echo "📤 Skipping direct upload inside action."
+echo "ℹ️ Please add a step in your workflow using 'actions/upload-artifact' to upload the file: $ZIP_FILE"
