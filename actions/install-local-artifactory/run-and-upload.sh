@@ -1,7 +1,9 @@
 #!/bin/bash
 set -e
 
-if curl -s http://localhost:8082/artifactory/api/v1/system/ping | grep -q "OK"; then
+PING_RESPONSE=$(curl -s http://localhost:8082/artifactory/api/v1/system/ping)
+echo "🔍 Ping response: $PING_RESPONSE"
+if echo "$PING_RESPONSE" | grep -q "OK"; then
   echo "✅ Artifactory is already running. Skipping installation."
   exit 0
 fi
@@ -25,7 +27,21 @@ else
   ~/go/bin/local-rt-setup
 fi
 
-zip -j "$ZIP_FILE" "$LOG_DIR"/*.log
+OS_NAME="$(uname -s)"
+if [[ "$OS_NAME" == "MINGW"* || "$OS_NAME" == "MSYS"* || "$OS_NAME" == "CYGWIN"* ]]; then
+  echo "Windows detected — using PowerShell to compress logs"
+  LOG_DIR_WIN=$(cygpath -w "$LOG_DIR")
+  ZIP_FILE_WIN=$(cygpath -w "$ZIP_FILE")
+  powershell.exe -Command "Compress-Archive -Path '${LOG_DIR_WIN}\\*.log' -DestinationPath '${ZIP_FILE_WIN}'"
+else
+  echo "🐧 Linux/macOS detected — using zip"
+  if command -v zip >/dev/null 2>&1; then
+    zip -j "$ZIP_FILE" "$LOG_DIR"/*.log || echo "⚠️ Failed to zip logs"
+  else
+    echo "❌ 'zip' command not found"
+  fi
+fi
+
 echo "📤 Uploading logs..."
 curl -sL https://github.com/actions/upload-artifact/releases/latest/download/upload-artifact-linux -o upload-artifact
 chmod +x upload-artifact
